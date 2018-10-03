@@ -33,9 +33,13 @@ window.onload = function () {
       data: {
         'data': dataURI
       },
-      success: function (dataString) {
-        // $('#mentor_list').html(dataString);
-        // console.log('**mentor_list div updated via ajax.**'); 
+      success: function (response) {
+        // console.log(response)
+        var list_of_names = jQuery.map(response, function (e) {
+          return e.name;
+        });
+
+        $(".prediction_results").val("Is this " + list_of_names.join(', '));
       }
     });
   })

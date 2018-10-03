@@ -1,2 +1,5 @@
 .vscode/
 node_modules/
+static/data/
+notebooks/
+*.pyc

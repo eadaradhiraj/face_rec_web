@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-from bottle import route, run, static_file, request
+from bottle import route, run, static_file, request, response
 from PIL import Image
 import re
+import json
 from io import BytesIO
 import base64
+import test
 
 
 @route('/node_modules/tracking/build/tracking-min.js')
@@ -30,8 +32,10 @@ def static_js(filename):
 @route('/test', method='POST')
 def serve_image():
     image_data = re.sub('^data:image/.+;base64,', '', request.forms['data'])
-    image = Image.open(BytesIO(base64.b64decode(image_data)))
-    image.show()
+    prediction = test.predict(X_img_path=BytesIO(base64.b64decode(
+        image_data)), model_path="static/data/knn_model.sav")
+    response.content_type = 'application/json'
+    return json.dumps(prediction)
 
 
 @route(r'/static/css/<filename:re:.*\.css>')
