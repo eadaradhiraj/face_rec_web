@@ -12,6 +12,10 @@
   padding: .7em 0;
 }
 
+#snapshotCanvas {
+  display: none;
+}
+
 .demo-title a {
   color: #fff;
   border-bottom: 1px dotted #a64ceb;

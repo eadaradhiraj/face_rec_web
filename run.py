@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from bottle import route, run, static_file, request, response
-from PIL import Image
 import re
 import json
 from io import BytesIO
