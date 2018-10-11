@@ -1,8 +1,13 @@
+var video, canvas, context, tracker;
 window.onload = function () {
-  var video = document.getElementById('video');
-  var canvas = document.getElementById('canvas');
-  var context = canvas.getContext('2d');
-  var tracker = new tracking.ObjectTracker('face');
+  video = document.getElementById('video');
+  canvas = document.getElementById('canvas');
+  context = canvas.getContext('2d');
+  tracker = new tracking.ObjectTracker('face');
+  track_image(tracker, canvas, context)
+};
+
+function track_image(tracker, canvas, context) {
   tracker.setInitialScale(4);
   tracker.setStepSize(2);
   tracker.setEdgesDensity(0.1);
@@ -18,29 +23,28 @@ window.onload = function () {
       context.fillStyle = "#fff";
       context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
       context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
-
     });
   });
+}
 
-  $("#button").on('click', function () {
-    var snapshotContext = snapshotCanvas.getContext('2d');
-    snapshotContext.drawImage(video, 0, 0, video.width, video.height);
+$("#canvas").on('click', function () {
+  var snapshotContext = snapshotCanvas.getContext('2d');
+  snapshotContext.drawImage(video, 0, 0, video.width, video.height);
 
-    var dataURI = snapshotCanvas.toDataURL('image/jpeg'); // can also use 'image/png'
-    $.ajax({
-      type: "POST",
-      url: "/test",
-      data: {
-        'data': dataURI
-      },
-      success: function (response) {
-        // console.log(response)
-        var list_of_names = jQuery.map(response, function (e) {
-          return e.name;
-        });
+  var dataURI = snapshotCanvas.toDataURL('image/jpeg'); // can also use 'image/png'
+  $.ajax({
+    type: "POST",
+    url: "/test",
+    data: {
+      'data': dataURI
+    },
+    success: function (response) {
+      var list_of_names = jQuery.map(response, function (e) {
+        return e.name;
+      });
 
-        $(".prediction_results").val("Is this " + list_of_names.join(', '));
-      }
-    });
-  })
-};
+      $(".prediction_results").val("Is this " + list_of_names.join(', '));
+      track_image(tracker, canvas, context);
+    }
+  });
+});
