@@ -23,6 +23,10 @@ function track_image(tracker, canvas, context) {
       context.fillStyle = "#fff";
       context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
       context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+<<<<<<< HEAD
+=======
+      context.fillText('name: ' + person || 'unrecognised', rect.x + rect.width + 5, rect.y + 33);
+>>>>>>> a0880b7d00726f76a761d872e61a9795f6133695
     });
   });
 }
