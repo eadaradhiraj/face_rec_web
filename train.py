@@ -5,15 +5,25 @@ import pickle
 import face_recognition
 import re
 
+directory = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(directory, 'static', 'data')
+TRAIN_DIR = os.path.join(DATA_DIR, 'train')
+MODEL_PATH = os.path.join(DATA_DIR, 'knn_model.sav')
+
 
 def image_files_in_folder(folder):
-    return [os.path.join(folder, f) for f in os.listdir(folder) if re.match(r'.*\.(jpg|jpeg|png)', f, flags=re.I)]
+    return [os.path.join(folder, f)
+            for f in os.listdir(folder)
+            if re.match(r'.*\.(jpg|jpeg|png)', f, flags=re.I)]
 
 
-def train(train_dir='static/data/train', model_save_path='static/data/knn_model.sav', n_neighbors=None, knn_algo='ball_tree', verbose=False):
+def train(train_dir=TRAIN_DIR,
+          model_save_path=MODEL_PATH,
+          n_neighbors=None, knn_algo='ball_tree', verbose=False):
     """
     Trains a k-nearest neighbors classifier for face recognition.
-    :param train_dir: directory that contains a sub-directory for each known person, with its name.
+    :param train_dir: directory that contains a sub-directory for each
+                        known person, with its name.
      (View in source code to see train_dir example tree structure)
      Structure:
         <train_dir>/
@@ -25,8 +35,10 @@ def train(train_dir='static/data/train', model_save_path='static/data/knn_model.
         │   ├── <somename1>.jpeg
         │   └── <somename2>.jpeg
         └── ...
-    :param n_neighbors: (optional) number of neighbors to weigh in classification. Chosen automatically if not specified
-    :param knn_algo: (optional) underlying data structure to support knn.default is ball_tree
+    :param n_neighbors: (optional) number of neighbors to weigh in
+                        classification. Chosen automatically if not specified
+    :param knn_algo: (optional) underlying data structure to support knn.
+                    Default is ball_tree
     :param verbose: verbosity of training
     :return: returns knn classifier that was trained on the given data.
     """
@@ -39,15 +51,22 @@ def train(train_dir='static/data/train', model_save_path='static/data/knn_model.
             continue
 
         # Loop through each training image for the current person
-        for img_path in image_files_in_folder(os.path.join(train_dir, class_dir)):
+        for img_path in \
+                image_files_in_folder(os.path.join(train_dir, class_dir)):
             image = face_recognition.load_image_file(img_path)
             face_bounding_boxes = face_recognition.face_locations(image)
 
             if len(face_bounding_boxes) != 1:
-                # If there are no people (or too many people) in a training image, skip the image.
+                # If there are no people (or too many people)
+                # in a training image, skip the image.
                 if verbose:
-                    print("Image {} not suitable for training: {}".format(img_path, "Didn't find a face" if len(
-                        face_bounding_boxes) < 1 else "Found more than one face"))
+                    print(
+                        "Image {} not suitable for training: {}"
+                        .format(img_path, "Didn't find a face"
+                                if len(
+                                    face_bounding_boxes) < 1
+                                else "Found more than one face")
+                    )
             else:
                 # Add face encoding for current image to the training set
                 X.append(face_recognition.face_encodings(
